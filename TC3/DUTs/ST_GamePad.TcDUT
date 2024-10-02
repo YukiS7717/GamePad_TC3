@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ST_GamePad" Id="{6a42228c-3a88-49bb-8602-0fe4576d83ee}">
+    <Declaration><![CDATA[TYPE ST_GamePad :
+STRUCT
+	LeftStickX  : INT;  // -32768 to 32767
+    LeftStickY  : INT;  // -32768 to 32767
+    RightStickX : INT;  // -32768 to 32767
+    RightStickY : INT;  // -32768 to 32767
+    ButtonA     : BOOL;
+    ButtonB     : BOOL;
+    ButtonX     : BOOL;
+    ButtonY     : BOOL;
+    ButtonL1    : BOOL;
+    ButtonR1    : BOOL;
+    TriggerL2   : UINT;  // 0 to 65535
+    TriggerR2   : UINT;  // 0 to 65535
+	ButtonL2D   : BOOL;
+    ButtonR2D   : BOOL;
+    ButtonL3    : BOOL;
+    ButtonR3    : BOOL;
+    ButtonStart : BOOL;
+    ButtonSelect: BOOL;
+    DPadUp      : BOOL;
+    DPadDown    : BOOL;
+    DPadLeft    : BOOL;
+    DPadRight   : BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <GVL Name="GVL" Id="{4611b997-552b-483c-875f-f79c2f1ecef2}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	stGamePad1 : ST_GamePad;
+    stGamePad2 : ST_GamePad;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
