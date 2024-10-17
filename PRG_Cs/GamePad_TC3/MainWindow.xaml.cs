@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using TwinCATUsbControllerApp.Controllers;
+using TwinCATUsbControllerApp.Models;
 
 namespace TwinCATUsbControllerApp
 {
@@ -8,23 +10,31 @@ namespace TwinCATUsbControllerApp
     {
         private ADSCommunication adsCommunication;
         private ControllerManager controllerManager;
+        private ConfigurationManager configManager;
 
         public MainWindow()
         {
             InitializeComponent();
+            configManager = new ConfigurationManager();
+            configManager.LoadConfiguration();
             adsCommunication = new ADSCommunication();
-            controllerManager = new ControllerManager();
-            RefreshControllerList();
+            controllerManager = new ControllerManager(configManager);
+            InitializeUI();
+        }
 
-            // コントローラーの検出に時間がかかる場合があるため、少し遅延させて再度更新
-            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Tick += (sender, e) =>
-            {
-                RefreshControllerList();
-                (sender as System.Windows.Threading.DispatcherTimer).Stop();
-            };
-            timer.Interval = TimeSpan.FromSeconds(2);
-            timer.Start();
+        private void InitializeUI()
+        {
+            RefreshControllerList();
+            InitializeMappingComboBoxes();
+        }
+
+        private void InitializeMappingComboBoxes()
+        {
+            var mappings = controllerManager.GetAvailableMappings();
+            Controller1MappingComboBox.ItemsSource = mappings;
+            Controller2MappingComboBox.ItemsSource = mappings;
+            Controller1MappingComboBox.SelectedItem = configManager.Controller1Mapping;
+            Controller2MappingComboBox.SelectedItem = configManager.Controller2Mapping;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -55,32 +65,17 @@ namespace TwinCATUsbControllerApp
         private void RefreshControllerList()
         {
             var controllers = controllerManager.RefreshControllerList();
-            Console.WriteLine($"Refreshed controller list. Found {controllers.Count} controllers.");
-
-            Controller1ComboBox.ItemsSource = null;
-            Controller2ComboBox.ItemsSource = null;
-
             Controller1ComboBox.ItemsSource = controllers;
             Controller2ComboBox.ItemsSource = controllers;
-
-            Controller1ComboBox.SelectedIndex = -1;
-            Controller2ComboBox.SelectedIndex = -1;
         }
 
         private void Controller1ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Controller1ComboBox.SelectedIndex != -1)
             {
-                Console.WriteLine($"Attempting to connect Controller 1, index: {Controller1ComboBox.SelectedIndex}");
-                if (controllerManager.IsControllerAlreadyConnected(Controller1ComboBox.SelectedIndex))
-                {
-                    MessageBox.Show("This controller is already connected to another port.");
-                    Controller1ComboBox.SelectedIndex = -1;
-                    return;
-                }
                 if (controllerManager.ConnectController(1, Controller1ComboBox.SelectedIndex))
                 {
-                    Controller1Status.Text = $"Controller 1: Connected - {controllerManager.GetControllerName(1)}";
+                    UpdateControllerStatus(1);
                     StartPolling();
                 }
                 else
@@ -94,16 +89,9 @@ namespace TwinCATUsbControllerApp
         {
             if (Controller2ComboBox.SelectedIndex != -1)
             {
-                Console.WriteLine($"Attempting to connect Controller 2, index: {Controller2ComboBox.SelectedIndex}");
-                if (controllerManager.IsControllerAlreadyConnected(Controller2ComboBox.SelectedIndex))
-                {
-                    MessageBox.Show("This controller is already connected to another port.");
-                    Controller2ComboBox.SelectedIndex = -1;
-                    return;
-                }
                 if (controllerManager.ConnectController(2, Controller2ComboBox.SelectedIndex))
                 {
-                    Controller2Status.Text = $"Controller 2: Connected - {controllerManager.GetControllerName(2)}";
+                    UpdateControllerStatus(2);
                     StartPolling();
                 }
                 else
@@ -113,11 +101,41 @@ namespace TwinCATUsbControllerApp
             }
         }
 
+        private void Controller1MappingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Controller1MappingComboBox.SelectedItem is string selectedMapping)
+            {
+                controllerManager.SetControllerMapping(1, selectedMapping);
+                configManager.Controller1Mapping = selectedMapping;
+                configManager.SaveConfiguration();
+                UpdateControllerStatus(1);
+            }
+        }
+
+        private void Controller2MappingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Controller2MappingComboBox.SelectedItem is string selectedMapping)
+            {
+                controllerManager.SetControllerMapping(2, selectedMapping);
+                configManager.Controller2Mapping = selectedMapping;
+                configManager.SaveConfiguration();
+                UpdateControllerStatus(2);
+            }
+        }
+
+        private void UpdateControllerStatus(int controllerId)
+        {
+            var status = controllerId == 1 ? Controller1Status : Controller2Status;
+            var controllerName = controllerManager.GetControllerName(controllerId);
+            var mapping = controllerId == 1 ? configManager.Controller1Mapping : configManager.Controller2Mapping;
+            status.Text = $"Controller {controllerId}: Connected - {controllerName} (Mapping: {mapping})";
+        }
+
         private void StartPolling()
         {
             System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromMilliseconds(16); // 約60Hz
+            timer.Interval = TimeSpan.FromMilliseconds(16); // Approximately 60Hz
             timer.Start();
         }
 

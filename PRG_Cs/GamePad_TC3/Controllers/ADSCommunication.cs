@@ -1,7 +1,9 @@
 ﻿using System;
 using TwinCAT.Ads;
+using TwinCATUsbControllerApp.Models;
+using TwinCATUsbControllerApp.Utilities;
 
-namespace TwinCATUsbControllerApp
+namespace TwinCATUsbControllerApp.Controllers
 {
     public class ADSCommunication : IDisposable
     {
@@ -13,11 +15,12 @@ namespace TwinCATUsbControllerApp
             {
                 adsClient = new AdsClient();
                 adsClient.Connect(amsNetId, port);
+                Logger.Log($"Connected to ADS at {amsNetId}:{port}");
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error connecting to ADS: {ex.Message}");
+                Logger.Log($"Error connecting to ADS: {ex.Message}");
                 return false;
             }
         }
@@ -28,14 +31,14 @@ namespace TwinCATUsbControllerApp
 
             try
             {
-                string varName = $"GVL.stGamePad{controllerId}";
+                string varName = $"MAIN.Controller{controllerId}";
                 uint variableHandle = adsClient.CreateVariableHandle(varName);
                 adsClient.WriteAny(variableHandle, state);
                 adsClient.DeleteVariableHandle(variableHandle);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending data to PLC: {ex.Message}");
+                Logger.Log($"Error sending data to PLC: {ex.Message}");
             }
         }
 

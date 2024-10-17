@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TwinCATUsbControllerApp
+namespace TwinCATUsbControllerApp.Models
 {
     [StructLayout(LayoutKind.Sequential, Pack = 0)]
     public class ST_GamePad
