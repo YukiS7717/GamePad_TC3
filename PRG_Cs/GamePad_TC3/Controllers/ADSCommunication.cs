@@ -31,7 +31,7 @@ namespace TwinCATUsbControllerApp.Controllers
 
             try
             {
-                string varName = $"MAIN.Controller{controllerId}";
+                string varName = $"GVL.stGamePad{controllerId}";
                 uint variableHandle = adsClient.CreateVariableHandle(varName);
                 adsClient.WriteAny(variableHandle, state);
                 adsClient.DeleteVariableHandle(variableHandle);
