@@ -9,6 +9,12 @@ namespace TwinCATUsbControllerApp.Models
         private const string ConfigFileName = "config.xml";
         public string Controller1Mapping { get; set; } = "Default";
         public string Controller2Mapping { get; set; } = "Default";
+        // ジャイロ設定の追加
+        public bool GyroEnabled { get; set; } = true;
+        public float GyroSensitivity { get; set; } = 1.0f;
+        public bool GyroInvertX { get; set; } = false;
+        public bool GyroInvertY { get; set; } = false;
+        public bool GyroInvertZ { get; set; } = false;
 
         public void SaveConfiguration()
         {

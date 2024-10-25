@@ -11,6 +11,7 @@ namespace TwinCATUsbControllerApp
         private ADSCommunication adsCommunication;
         private ControllerManager controllerManager;
         private ConfigurationManager configManager;
+        private System.Windows.Threading.DispatcherTimer timer;
 
         public MainWindow()
         {
@@ -26,6 +27,7 @@ namespace TwinCATUsbControllerApp
         {
             RefreshControllerList();
             InitializeMappingComboBoxes();
+            InitializeGyroSettings();
         }
 
         private void InitializeMappingComboBoxes()
@@ -37,6 +39,16 @@ namespace TwinCATUsbControllerApp
             Controller2MappingComboBox.SelectedItem = configManager.Controller2Mapping;
         }
 
+        private void InitializeGyroSettings()
+        {
+            GyroEnabledCheckBox.IsChecked = configManager.GyroEnabled;
+            GyroSensitivitySlider.Value = configManager.GyroSensitivity;
+            GyroSensitivityValue.Text = configManager.GyroSensitivity.ToString("F1");
+            GyroInvertXCheckBox.IsChecked = configManager.GyroInvertX;
+            GyroInvertYCheckBox.IsChecked = configManager.GyroInvertY;
+            GyroInvertZCheckBox.IsChecked = configManager.GyroInvertZ;
+        }
+
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
             string amsNetId = AmsNetIdTextBox.Text;
@@ -46,14 +58,22 @@ namespace TwinCATUsbControllerApp
                 return;
             }
 
-            if (adsCommunication.Connect(amsNetId, adsPort))
+            try
             {
-                ConnectionStatus.Text = $"Connected to {amsNetId}:{adsPort}";
-                MessageBox.Show($"Connected to TwinCAT at {amsNetId}:{adsPort}");
+                if (adsCommunication.Connect(amsNetId, adsPort))
+                {
+                    ConnectionStatus.Text = $"Connected to {amsNetId}:{adsPort}";
+                    MessageBox.Show($"Connected to TwinCAT at {amsNetId}:{adsPort}");
+                }
+                else
+                {
+                    ConnectionStatus.Text = "Connection Failed";
+                }
             }
-            else
+            catch (Exception ex)
             {
                 ConnectionStatus.Text = "Connection Failed";
+                MessageBox.Show($"Connection error: {ex.Message}");
             }
         }
 
@@ -133,10 +153,13 @@ namespace TwinCATUsbControllerApp
 
         private void StartPolling()
         {
-            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromMilliseconds(16); // Approximately 60Hz
-            timer.Start();
+            if (timer == null)
+            {
+                timer = new System.Windows.Threading.DispatcherTimer();
+                timer.Tick += Timer_Tick;
+                timer.Interval = TimeSpan.FromMilliseconds(16); // Approximately 60Hz
+                timer.Start();
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -151,13 +174,79 @@ namespace TwinCATUsbControllerApp
             if (state != null)
             {
                 textBlock.Text = state.ToString();
-                adsCommunication.SendGamePadState(controllerId, state);
+                try
+                {
+                    adsCommunication.SendGamePadState(controllerId, state);
+                }
+                catch (Exception ex)
+                {
+                    ConnectionStatus.Text = $"Communication Error: {ex.Message}";
+                }
             }
+        }
+
+        private void GyroEnabledCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroEnabled = true;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroEnabledCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroEnabled = false;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroSensitivitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (configManager != null)
+            {
+                configManager.GyroSensitivity = (float)e.NewValue;
+                GyroSensitivityValue.Text = configManager.GyroSensitivity.ToString("F1");
+                configManager.SaveConfiguration();
+            }
+        }
+
+        private void GyroInvertXCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertX = true;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroInvertXCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertX = false;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroInvertYCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertY = true;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroInvertYCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertY = false;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroInvertZCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertZ = true;
+            configManager.SaveConfiguration();
+        }
+
+        private void GyroInvertZCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            configManager.GyroInvertZ = false;
+            configManager.SaveConfiguration();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+            timer?.Stop();
             controllerManager.Dispose();
             adsCommunication.Dispose();
         }

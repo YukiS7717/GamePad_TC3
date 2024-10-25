@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using TwinCATUsbControllerApp.Models;
 
 namespace TwinCATUsbControllerApp.Mappings
 {
     public class ControllerMappings
     {
         private Dictionary<string, IControllerMapping> mappings;
+        private readonly ConfigurationManager configManager;
 
-        public ControllerMappings()
+        public ControllerMappings(ConfigurationManager config)
         {
+            configManager = config;
             InitializeMappings();
         }
 
@@ -15,9 +18,10 @@ namespace TwinCATUsbControllerApp.Mappings
         {
             mappings = new Dictionary<string, IControllerMapping>
             {
-                { "Xbox", new XboxControllerMapping() },
-                { "PlayStation", new PlayStationControllerMapping() },
-                { "Arcade", new ArcadeControllerMapping() }
+                { "Xbox", new XboxControllerMapping(configManager) },
+                { "PlayStation", new PlayStationControllerMapping(configManager) },
+                { "DualSense", new DualSenseControllerMapping(configManager) },
+                { "Arcade", new ArcadeControllerMapping(configManager) }
             };
         }
 

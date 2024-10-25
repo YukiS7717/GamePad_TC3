@@ -27,6 +27,10 @@ namespace TwinCATUsbControllerApp.Models
         [MarshalAs(UnmanagedType.I1)] public bool DPadDown;
         [MarshalAs(UnmanagedType.I1)] public bool DPadLeft;
         [MarshalAs(UnmanagedType.I1)] public bool DPadRight;
+        public short GyroX;
+        public short GyroY;
+        public short GyroZ;
+        [MarshalAs(UnmanagedType.I1)] public bool GyroEnabled; // ジャイロ有効/無効フラグ
 
         public override string ToString()
         {

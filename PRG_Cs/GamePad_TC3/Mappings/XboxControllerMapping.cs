@@ -8,8 +8,16 @@ namespace TwinCATUsbControllerApp.Mappings
     public class XboxControllerMapping : IControllerMapping
     {
         public string Name => "Xbox";
+        public bool SupportsGyro => false;  // 追加：Xboxコントローラーはジャイロをサポートしない
+        public float GyroSensitivity { get; set; } = 0.0f;  // 追加：ジャイロ感度（未使用）
 
+        private readonly ConfigurationManager configManager;  // 追加：設定管理用
         private const int TriggerThreshold = 30000; // L2D/R2Dがtrueになるしきい値
+
+        public XboxControllerMapping(ConfigurationManager config)  // 追加：コンストラクタ
+        {
+            configManager = config;
+        }
 
         public Dictionary<string, int> GetButtonMapping()
         {
@@ -65,7 +73,12 @@ namespace TwinCATUsbControllerApp.Mappings
                 DPadUp = state.PointOfViewControllers[0] == 0,
                 DPadRight = state.PointOfViewControllers[0] == 9000,
                 DPadDown = state.PointOfViewControllers[0] == 18000,
-                DPadLeft = state.PointOfViewControllers[0] == 27000
+                DPadLeft = state.PointOfViewControllers[0] == 27000,
+                // 追加：ジャイロ関連の値（Xboxコントローラーでは未使用）
+                GyroX = 0,
+                GyroY = 0,
+                GyroZ = 0,
+                GyroEnabled = false
             };
         }
 

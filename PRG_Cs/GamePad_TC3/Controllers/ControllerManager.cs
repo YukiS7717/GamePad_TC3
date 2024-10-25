@@ -15,17 +15,19 @@ namespace TwinCATUsbControllerApp.Controllers
         private List<DeviceInstance> availableControllers;
         private ControllerMappings mappings;
         private Dictionary<int, string> controllerMappings;
+        private readonly ConfigurationManager configManager;
 
         public ControllerManager(ConfigurationManager config)
         {
+            configManager = config;
             directInput = new DirectInput();
             joysticks = new Dictionary<int, Joystick>();
-            mappings = new ControllerMappings();
+            mappings = new ControllerMappings(config);  // configを渡す
             controllerMappings = new Dictionary<int, string>
-            {
-                { 1, config.Controller1Mapping },
-                { 2, config.Controller2Mapping }
-            };
+        {
+            { 1, config.Controller1Mapping },
+            { 2, config.Controller2Mapping }
+        };
         }
 
         public List<string> RefreshControllerList()

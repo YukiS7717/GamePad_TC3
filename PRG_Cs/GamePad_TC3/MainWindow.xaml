@@ -5,28 +5,76 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <TextBlock Text="AMS Net ID:" Margin="10,10,10,0"/>
-                <TextBox x:Name="AmsNetIdTextBox" Text="127.0.0.1.1.1" Margin="10,0,10,10"/>
-                <TextBlock Text="ADS Port:" Margin="10,10,10,0"/>
-                <TextBox x:Name="AdsPortTextBox" Text="851" Margin="10,0,10,10"/>
-                <Button Content="Connect to TwinCAT" Click="ConnectButton_Click" Margin="10"/>
-                <TextBlock x:Name="ConnectionStatus" Text="Not Connected" Margin="10" FontWeight="Bold"/>
+                <GroupBox Header="TwinCAT Connection" Margin="10">
+                    <StackPanel>
+                        <TextBlock Text="AMS Net ID:" Margin="10,10,10,0"/>
+                        <TextBox x:Name="AmsNetIdTextBox" Text="127.0.0.1.1.1" Margin="10,0,10,10"/>
+                        <TextBlock Text="ADS Port:" Margin="10,10,10,0"/>
+                        <TextBox x:Name="AdsPortTextBox" Text="851" Margin="10,0,10,10"/>
+                        <Button Content="Connect to TwinCAT" Click="ConnectButton_Click" Margin="10"/>
+                        <TextBlock x:Name="ConnectionStatus" Text="Not Connected" Margin="10" FontWeight="Bold"/>
+                    </StackPanel>
+                </GroupBox>
 
-                <Button Content="Refresh Controllers" Click="RefreshControllers_Click" Margin="10"/>
+                <GroupBox Header="Controller Settings" Margin="10">
+                    <StackPanel>
+                        <Button Content="Refresh Controllers" Click="RefreshControllers_Click" Margin="10"/>
 
-                <TextBlock Text="Controller 1:" Margin="10,10,10,0"/>
-                <ComboBox x:Name="Controller1ComboBox" Margin="10,0,10,10" SelectionChanged="Controller1ComboBox_SelectionChanged"/>
-                <TextBlock Text="Controller 1 Mapping:" Margin="10,10,10,0"/>
-                <ComboBox x:Name="Controller1MappingComboBox" Margin="10,0,10,10" SelectionChanged="Controller1MappingComboBox_SelectionChanged"/>
-                <TextBlock x:Name="Controller1Status" Text="Controller 1: Not Connected" Margin="10"/>
-                <TextBlock x:Name="Controller1Input" Text="" Margin="10,0,10,10"/>
+                        <TextBlock Text="Controller 1:" Margin="10,10,10,0"/>
+                        <ComboBox x:Name="Controller1ComboBox" Margin="10,0,10,10" 
+                                 SelectionChanged="Controller1ComboBox_SelectionChanged"/>
+                        <TextBlock Text="Controller 1 Mapping:" Margin="10,10,10,0"/>
+                        <ComboBox x:Name="Controller1MappingComboBox" Margin="10,0,10,10" 
+                                 SelectionChanged="Controller1MappingComboBox_SelectionChanged"/>
+                        <TextBlock x:Name="Controller1Status" Text="Controller 1: Not Connected" Margin="10"/>
+                        <TextBlock x:Name="Controller1Input" Text="" Margin="10,0,10,10"/>
 
-                <TextBlock Text="Controller 2:" Margin="10,10,10,0"/>
-                <ComboBox x:Name="Controller2ComboBox" Margin="10,0,10,10" SelectionChanged="Controller2ComboBox_SelectionChanged"/>
-                <TextBlock Text="Controller 2 Mapping:" Margin="10,10,10,0"/>
-                <ComboBox x:Name="Controller2MappingComboBox" Margin="10,0,10,10" SelectionChanged="Controller2MappingComboBox_SelectionChanged"/>
-                <TextBlock x:Name="Controller2Status" Text="Controller 2: Not Connected" Margin="10"/>
-                <TextBlock x:Name="Controller2Input" Text="" Margin="10,0,10,10"/>
+                        <TextBlock Text="Controller 2:" Margin="10,10,10,0"/>
+                        <ComboBox x:Name="Controller2ComboBox" Margin="10,0,10,10" 
+                                 SelectionChanged="Controller2ComboBox_SelectionChanged"/>
+                        <TextBlock Text="Controller 2 Mapping:" Margin="10,10,10,0"/>
+                        <ComboBox x:Name="Controller2MappingComboBox" Margin="10,0,10,10" 
+                                 SelectionChanged="Controller2MappingComboBox_SelectionChanged"/>
+                        <TextBlock x:Name="Controller2Status" Text="Controller 2: Not Connected" Margin="10"/>
+                        <TextBlock x:Name="Controller2Input" Text="" Margin="10,0,10,10"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Gyro Settings" Margin="10">
+                    <StackPanel>
+                        <CheckBox x:Name="GyroEnabledCheckBox" 
+                                 Content="Enable Gyro" 
+                                 Margin="10"
+                                 Checked="GyroEnabledCheckBox_Checked"
+                                 Unchecked="GyroEnabledCheckBox_Unchecked"/>
+
+                        <TextBlock Text="Gyro Sensitivity:" Margin="10,5,10,0"/>
+                        <Slider x:Name="GyroSensitivitySlider"
+                               Minimum="0.1" Maximum="2.0" Value="1.0"
+                               Margin="10,0,10,10"
+                               ValueChanged="GyroSensitivitySlider_ValueChanged"/>
+                        <TextBlock x:Name="GyroSensitivityValue" 
+                                 Text="1.0" 
+                                 Margin="10,0,10,10"
+                                 HorizontalAlignment="Center"/>
+
+                        <CheckBox x:Name="GyroInvertXCheckBox" 
+                                 Content="Invert X Axis" 
+                                 Margin="10"
+                                 Checked="GyroInvertXCheckBox_Checked"
+                                 Unchecked="GyroInvertXCheckBox_Unchecked"/>
+                        <CheckBox x:Name="GyroInvertYCheckBox" 
+                                 Content="Invert Y Axis" 
+                                 Margin="10"
+                                 Checked="GyroInvertYCheckBox_Checked"
+                                 Unchecked="GyroInvertYCheckBox_Unchecked"/>
+                        <CheckBox x:Name="GyroInvertZCheckBox" 
+                                 Content="Invert Z Axis" 
+                                 Margin="10"
+                                 Checked="GyroInvertZCheckBox_Checked"
+                                 Unchecked="GyroInvertZCheckBox_Unchecked"/>
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
         </ScrollViewer>
     </Grid>

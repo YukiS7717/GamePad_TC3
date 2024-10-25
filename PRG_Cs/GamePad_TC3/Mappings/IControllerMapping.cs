@@ -11,5 +11,7 @@ namespace TwinCATUsbControllerApp.Mappings
         Dictionary<string, int> GetButtonMapping();
         Dictionary<string, Func<int, short>> GetAxisMapping();
         ST_GamePad MapState(JoystickState state);
+        bool SupportsGyro { get; } // ジャイロセンサーをサポートしているかどうか
+        float GyroSensitivity { get; set; } // ジャイロ感度設定
     }
 }

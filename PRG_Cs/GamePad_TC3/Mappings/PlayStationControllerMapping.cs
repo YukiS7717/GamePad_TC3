@@ -8,14 +8,32 @@ namespace TwinCATUsbControllerApp.Mappings
     public class PlayStationControllerMapping : IControllerMapping
     {
         public string Name => "PlayStation";
+        public bool SupportsGyro => false;
+        public float GyroSensitivity { get; set; } = 0.0f;
+
+        private readonly ConfigurationManager configManager;
+
+        public PlayStationControllerMapping(ConfigurationManager config)
+        {
+            configManager = config;
+        }
 
         public Dictionary<string, int> GetButtonMapping()
         {
             return new Dictionary<string, int>
             {
-                {"A", 1}, {"B", 2}, {"X", 0}, {"Y", 3},
-                {"L1", 4}, {"R1", 5}, {"L2D", 6}, {"R2D", 7},
-                {"L3", 10}, {"R3", 11}, {"Start", 8}, {"Select", 9}
+                {"A", 1},  // ×ボタン
+                {"B", 2},  // ○ボタン
+                {"X", 0},  // □ボタン
+                {"Y", 3},  // △ボタン
+                {"L1", 4},
+                {"R1", 5},
+                {"L2D", 6},
+                {"R2D", 7},
+                {"L3", 10},
+                {"R3", 11},
+                {"Start", 8},  // OPTIONSボタン
+                {"Select", 9}  // SHAREボタン
             };
         }
 
@@ -60,7 +78,12 @@ namespace TwinCATUsbControllerApp.Mappings
                 DPadUp = state.PointOfViewControllers[0] == 0,
                 DPadRight = state.PointOfViewControllers[0] == 9000,
                 DPadDown = state.PointOfViewControllers[0] == 18000,
-                DPadLeft = state.PointOfViewControllers[0] == 27000
+                DPadLeft = state.PointOfViewControllers[0] == 27000,
+                // ジャイロはサポートしないので常に0
+                GyroX = 0,
+                GyroY = 0,
+                GyroZ = 0,
+                GyroEnabled = false
             };
         }
     }
